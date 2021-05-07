@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using Newtonsoft.Json;
+using UnityEngine.UI;
 
 using Fitcoin;
 
@@ -13,17 +12,51 @@ public class Manager : MonoBehaviour
     [SerializeField]
     private FitcoinService service = null;
 
+    [SerializeField]
+    private RawImage qrCodeImage = null;
+
     // Start is called before the first frame update
     void Start()
     {
         service.AccessToken = accessToken;
-        service?.CreateLinkRequest(
-            onInternalError: InternalErrorOccurred,
-            onResponse: LinkRequestDataReceived);
+        service.LinkRequestID = "6095793157c689ad83c0106d";
+        // service?.CreateLinkRequest(
+        //     onInternalError: InternalErrorOccurred,
+        //     onResponse: LinkRequestDataReceived);
+        
+        service.GetQRCodeForLinkRequest(
+            onInternalError: (error) => {
+                Debug.LogError($"Internal error! {error}");
+            },
+
+            onResponse: (code, texture) => {
+                Debug.Log($"QR code data received ({code}) - {texture}");
+                qrCodeImage.texture = texture;
+            }
+        );
     }
 
-    void InternalErrorOccurred(string message) {
-        Debug.LogError($"Internal error! {message}");
+    float timer = 0f;
+
+    void Update() {
+        if (timer < 5f) {
+            timer += Time.deltaTime;
+        }
+
+        else {
+            Debug.Log("Checking link request status");
+            
+            service.GetLinkRequestStatus(
+                onInternalError: (error) => {
+                    Debug.LogError($"Internal error! {error}");
+                },
+
+                onResponse: (code, status) => {
+                    Debug.Log($"Link request query ({code}) - {status.status}");
+                    timer = 0f;
+                }
+            );
+        }
     }
 
     void LinkRequestDataReceived(long code, string linkID) {
