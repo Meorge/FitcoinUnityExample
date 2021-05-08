@@ -44,7 +44,7 @@ public class Manager : MonoBehaviour
         connectAccountButton.onClick.AddListener(() => {
             pageManager?.SegueToPage(1, onStart: DisableAllButtons, onComplete: () => {
                 EnableAllButtons();
-                DisplayQRCodeAndListenForConnection();
+                CreateLinkRequest();
             });
             }
         );
@@ -53,6 +53,7 @@ public class Manager : MonoBehaviour
                 pageManager?.SegueBackward(0, onStart: () => {
                     DisableAllButtons();
                     service.StopMonitoringLinkRequestStatus();
+                    service.DeleteLinkRequest();
                     qrCodeImage.texture = null;
                 },
                 onComplete: EnableAllButtons);
@@ -64,17 +65,28 @@ public class Manager : MonoBehaviour
         }
         );
 
+        cancelFromDeniedButton.onClick.AddListener(() => {
+            pageManager?.SegueToPage(0, true);
+        }
+        );
+
 
         service.AccessToken = accessToken;
-        service.LinkRequestID = "6095793157c689ad83c0106d";
+    }
+
+    void CreateLinkRequest() {
+        service.CreateLinkRequest(
+            onError: DisplayError,
+            onResponse: (message) => {
+                DisplayQRCodeAndListenForConnection();
+            }
+        );
     }
 
     void DisplayQRCodeAndListenForConnection() {
         service.GetQRCodeForLinkRequest(
-            onInternalError: DisplayError,
-
-            onResponse: (code, texture) => {
-                Debug.Log($"QR code data received ({code}) - {texture}");
+            onError: DisplayError,
+            onResponse: (texture) => {
                 qrCodeImage.texture = texture;
             }
         );
@@ -82,17 +94,18 @@ public class Manager : MonoBehaviour
 
         service.MonitorLinkRequestStatus(
             queryInterval: 3,
-            onInternalError: DisplayError,
-
-            onResponse: (code, status) => {
-                Debug.Log($"Link request query ({code}) - {status.status}");
+            onError: DisplayError,
+            onResponse: (status) => {
+                Debug.Log($"Link request query - {status.status}");
                 var statusString = status.status;
 
                 if (statusString != "pending") {
                     service.StopMonitoringLinkRequestStatus();
+                    service.DeleteLinkRequest();
 
                     if (statusString == "approved") {
                         Debug.Log($"It was approved!! User ID is {status.user_id}");
+                        service.UserID = status.user_id;
                         DisplayApproved();
                     }
                     else if (statusString == "denied") {
@@ -106,6 +119,8 @@ public class Manager : MonoBehaviour
 
     void DisplayError(string message) {
         service.StopMonitoringLinkRequestStatus();
+        service.DeleteLinkRequest();
+
         errorLabel.text = message;
         pageManager?.SegueToPage(4,
             onStart: DisableAllButtons,
@@ -114,11 +129,17 @@ public class Manager : MonoBehaviour
 
     void DisplayApproved() {
         pageManager?.SegueToPage(2,
-        onStart: DisableAllButtons,
-        onComplete: EnableAllButtons
+            onStart: DisableAllButtons,
+            onComplete: EnableAllButtons
+        );
+
+
+        service.GetUserInfo(
+            onError: DisplayError,
+            onResponse: (a) => { Debug.Log($"{a.username} has balance of {a.balance}"); }
         );
     }
-    
+
     void DisplayDenied() {
         pageManager?.SegueToPage(3,
             onStart: DisableAllButtons,
