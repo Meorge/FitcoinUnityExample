@@ -34,29 +34,30 @@ public class Manager : MonoBehaviour
                 qrCodeImage.texture = texture;
             }
         );
-    }
 
-    float timer = 0f;
 
-    void Update() {
-        if (timer < 5f) {
-            timer += Time.deltaTime;
-        }
+        service.MonitorLinkRequestStatus(
+            queryInterval: 3,
+            onInternalError: (error) => {
+                Debug.LogError($"Internal error! {error}");
+            },
 
-        else {
-            Debug.Log("Checking link request status");
-            
-            service.GetLinkRequestStatus(
-                onInternalError: (error) => {
-                    Debug.LogError($"Internal error! {error}");
-                },
+            onResponse: (code, status) => {
+                Debug.Log($"Link request query ({code}) - {status.status}");
+                var statusString = status.status;
 
-                onResponse: (code, status) => {
-                    Debug.Log($"Link request query ({code}) - {status.status}");
-                    timer = 0f;
+                if (statusString != "pending") {
+                    service.StopMonitoringLinkRequestStatus();
+
+                    if (statusString == "approved") {
+                        Debug.Log($"It was approved!! User ID is {status.user_id}");
+                    }
+                    else if (statusString == "denied") {
+                        Debug.Log($"Link request was denied :(");
+                    }
                 }
-            );
-        }
+            }
+        );
     }
 
     void LinkRequestDataReceived(long code, string linkID) {
