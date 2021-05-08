@@ -32,6 +32,8 @@ public class UIPageManager : MonoBehaviour
         int previousIndex = currentIndex;
         currentIndex = newIndex;
 
+        Debug.Log($"Segueing from {previousIndex} to {currentIndex}");
+
         DOTween.Sequence()
             // Set new current page to just out of view
             .AppendCallback(() => { pages[currentIndex].gameObject.SetActive(true); })

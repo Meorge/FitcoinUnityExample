@@ -93,9 +93,11 @@ public class Manager : MonoBehaviour
 
                     if (statusString == "approved") {
                         Debug.Log($"It was approved!! User ID is {status.user_id}");
+                        DisplayApproved();
                     }
                     else if (statusString == "denied") {
                         Debug.Log($"Link request was denied :(");
+                        DisplayDenied();
                     }
                 }
             }
@@ -110,8 +112,18 @@ public class Manager : MonoBehaviour
             onComplete: EnableAllButtons);
     }
 
+    void DisplayApproved() {
+        pageManager?.SegueToPage(2,
+        onStart: DisableAllButtons,
+        onComplete: EnableAllButtons
+        );
+    }
+    
     void DisplayDenied() {
-        service.
+        pageManager?.SegueToPage(3,
+            onStart: DisableAllButtons,
+            onComplete: EnableAllButtons
+        );
     }
 
 
