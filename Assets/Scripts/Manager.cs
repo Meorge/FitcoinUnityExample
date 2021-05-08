@@ -14,10 +14,13 @@ public class Manager : MonoBehaviour
     private FitcoinService service = null;
 
     [SerializeField]
-    private RawImage qrCodeImage = null;
+    private UIQRCode qrCode = null;
 
     [SerializeField]
     private UIPageManager pageManager = null;
+
+    [SerializeField]
+    private UIModalManager modalManager = null;
 
     [SerializeField]
     private Button connectAccountButton = null;
@@ -42,7 +45,9 @@ public class Manager : MonoBehaviour
     {
         // Set up buttons
         connectAccountButton.onClick.AddListener(() => {
-            pageManager?.SegueToPage(1, onStart: DisableAllButtons, onComplete: () => {
+            pageManager?.SegueToPage(1,
+            onStart: () => { DisableAllButtons(); qrCode.StartLoading(); },
+            onComplete: () => {
                 EnableAllButtons();
                 CreateLinkRequest();
             });
@@ -54,21 +59,24 @@ public class Manager : MonoBehaviour
                     DisableAllButtons();
                     service.StopMonitoringLinkRequestStatus();
                     service.DeleteLinkRequest();
-                    qrCodeImage.texture = null;
                 },
-                onComplete: EnableAllButtons);
+                onComplete: () => { EnableAllButtons(); qrCode.Reset(); });
             }
         );
 
         cancelFromErrorButton.onClick.AddListener(() => {
             pageManager?.SegueToPage(0, true);
+            qrCode.Reset();
         }
         );
 
         cancelFromDeniedButton.onClick.AddListener(() => {
             pageManager?.SegueToPage(0, true);
+            qrCode.Reset();
         }
         );
+
+        doneButton.onClick.AddListener(() => { modalManager.DismissModal(); });
 
 
         service.AccessToken = accessToken;
@@ -87,7 +95,7 @@ public class Manager : MonoBehaviour
         service.GetQRCodeForLinkRequest(
             onError: DisplayError,
             onResponse: (texture) => {
-                qrCodeImage.texture = texture;
+                qrCode.DoneLoading(texture);
             }
         );
 
