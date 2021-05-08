@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,10 +17,13 @@ public class UIPageManager : MonoBehaviour
         }
     }
 
-    public void SegueForward(int newIndex) => SegueToPage(newIndex);
-    public void SegueBackward(int newIndex) => SegueToPage(newIndex, true);
 
-    public void SegueToPage(int newIndex, bool moveBack = false) {
+    public void SegueForward(int newIndex) => SegueToPage(newIndex);
+    public void SegueForward(int newIndex, TweenCallback onStart = null, TweenCallback onComplete = null) => SegueToPage(newIndex, false, onStart, onComplete);
+    public void SegueBackward(int newIndex) => SegueToPage(newIndex, true);
+    public void SegueBackward(int newIndex, TweenCallback onStart = null, TweenCallback onComplete = null) => SegueToPage(newIndex, true, onStart, onComplete);
+
+    public void SegueToPage(int newIndex, bool moveBack = false, TweenCallback onStart = null, TweenCallback onComplete = null) {
         /*
         - current page should move to the right
         - set next page's position to out of view
@@ -36,7 +40,11 @@ public class UIPageManager : MonoBehaviour
             // Swipe both of them left
             .Append(pages[currentIndex].DOAnchorPosX(0, animationDuration))
             .Join(pages[previousIndex].DOAnchorPosX(moveBack ? 2360 : -2360, animationDuration))
-            .AppendCallback(() => { pages[previousIndex].gameObject.SetActive(true); });
+            .AppendCallback(() => { pages[previousIndex].gameObject.SetActive(false); })
+
+
+            .OnStart(onStart ?? delegate {})
+            .OnComplete(onComplete ?? delegate {});
     }
 
 
