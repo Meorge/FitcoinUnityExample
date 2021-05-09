@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2106073604898983694}
   - component: {fileID: 2106073604898983695}
+  - component: {fileID: 4694690901934115138}
   m_Layer: 5
   m_Name: Store Item
   m_TagString: Untagged
@@ -67,6 +68,24 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &4694690901934115138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2106073604898983681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 332fcc3f33ac7455eaf4906036ef3dd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  icon: {fileID: 2106073604936799626}
+  nameLabel: {fileID: 2106073606222861467}
+  descriptionLabel: {fileID: 2106073605228472476}
+  costLabel: {fileID: 2106073605093260235}
+  ownedLabel: {fileID: 2106073605226142983}
+  buyButton: {fileID: 2106073606692840496}
 --- !u!1 &2106073604936799628
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,7 +151,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f27acb45d7afe4cccb0363e11feaab67, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -207,7 +226,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2 <sprite name=fitcoin_flat>
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f31b48d8a2f1946768ac067945e2c822, type: 2}
   m_sharedMaterial: {fileID: -7983935084692990531, guid: f31b48d8a2f1946768ac067945e2c822, type: 2}
@@ -341,7 +360,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Owned: 100'
+  m_text: 'Owned: ---'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7148d667621fa4e41994cbbb90f23df0, type: 2}
   m_sharedMaterial: {fileID: 8300119940200967200, guid: 7148d667621fa4e41994cbbb90f23df0, type: 2}
@@ -475,7 +494,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Makes your attacks stronger!
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7148d667621fa4e41994cbbb90f23df0, type: 2}
   m_sharedMaterial: {fileID: 8300119940200967200, guid: 7148d667621fa4e41994cbbb90f23df0, type: 2}
@@ -609,7 +628,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Power Punch
+  m_text: ---
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f31b48d8a2f1946768ac067945e2c822, type: 2}
   m_sharedMaterial: {fileID: -7983935084692990531, guid: f31b48d8a2f1946768ac067945e2c822, type: 2}
@@ -738,7 +757,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.1462264, g: 0.43002185, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -768,7 +787,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}

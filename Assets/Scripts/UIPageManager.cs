@@ -49,5 +49,15 @@ public class UIPageManager : MonoBehaviour
             .OnComplete(onComplete ?? delegate {});
     }
 
+    public void SnapToPage(int newIndex) {
+        pages[currentIndex].gameObject.SetActive(false);
+        pages[newIndex].gameObject.SetActive(true);
+
+        pages[newIndex].DOAnchorPosX(0, 0);
+
+        currentIndex = newIndex;
+
+    }
+
 
 }

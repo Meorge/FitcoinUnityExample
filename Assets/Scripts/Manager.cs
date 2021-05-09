@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,10 +9,11 @@ using Fitcoin;
 
 public class Manager : MonoBehaviour
 {
+    public static Manager instance { get; private set; }
     private readonly string accessToken = "3AijTyw7pGwEKRtXYiPhIK9yX3JqsQ3mTiXTnSBsRGc";
     
     [SerializeField]
-    private FitcoinService service = null;
+    public FitcoinService service = null;
 
     [SerializeField]
     private UIQRCode qrCode = null;
@@ -39,6 +41,25 @@ public class Manager : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI errorLabel = null;
+
+    [SerializeField]
+    private Button updateBalanceButton = null;
+
+
+    [Header("Can Purchase Colors")]
+    public ColorBlock canPurchaseColors = new ColorBlock();
+
+    // [Header("Too Expensive Colors")]
+    // public ColorBlock tooExpensiveColors = new ColorBlock();
+
+
+    void Awake() {
+        if (instance == null) instance = this;
+        else {
+            Debug.LogError("An instance of the Manager already exists - destroying this new one");
+            Destroy(gameObject);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -77,6 +98,9 @@ public class Manager : MonoBehaviour
         );
 
         doneButton.onClick.AddListener(() => { modalManager.DismissModal(); });
+
+
+        updateBalanceButton.onClick.AddListener(UpdateBalance);
 
 
         service.AccessToken = accessToken;
@@ -153,6 +177,38 @@ public class Manager : MonoBehaviour
             onStart: DisableAllButtons,
             onComplete: EnableAllButtons
         );
+    }
+
+    void UpdateBalance() {
+        service.GetUserInfo(
+            onError: (message) => {
+                modalManager.ShowModal();
+                errorLabel.text = message;
+                pageManager.SnapToPage(4);
+            },
+            onResponse: (newUserInfo) => {}
+        );
+    }
+
+    public void PurchaseItem(StoreItem item, Action<int> onSuccess = null) {
+        service.MakePurchase(
+            item.cost,
+            onError: (message) => {
+                Debug.LogError($"Error purchasing {item.name} - {message}");
+            },
+            onResponse: (newBalance) => {
+                int currentCount = PlayerPrefs.GetInt(item.id, 0);
+                currentCount++;
+                PlayerPrefs.SetInt(item.id, currentCount);
+
+                Debug.Log($"Purchase of {item.name} successful - now have {currentCount}");
+                onSuccess?.Invoke(currentCount);
+
+                // Get the new balance
+                UpdateBalance();
+            }
+        );
+
     }
 
 
