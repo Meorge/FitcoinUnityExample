@@ -789,7 +789,6 @@ MonoBehaviour:
   overlayImage: {fileID: 125573271}
   loadingIndicator: {fileID: 1537944889}
   qrImage: {fileID: 976269573}
-  loadingIndicatorAnimator: {fileID: 0}
   fadeDuration: 0.5
 --- !u!1 &357215426
 GameObject:
